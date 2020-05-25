@@ -1,3 +1,4 @@
+import 'package:alan_voice/alan_voice.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -46,6 +47,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  bool _alanInited = false;
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -54,6 +57,44 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      _counter--;
+    });
+  }
+
+  void _handleAlanCommand(Map<String, dynamic> command) {
+    debugPrint(command.toString());
+    if (command.containsKey("command")) {
+      switch (command["command"]) {
+        case "increment":
+          _incrementCounter();
+          break;
+        case "decrement":
+          _decrementCounter();
+          break;
+        default:
+          debugPrint("Unknown command");
+      }
+    }
+  }
+
+  void _initAlanButton() async {
+    if (_alanInited) {
+      return;
+    }
+    //init Alan with sample project id
+    AlanVoice.addButton(
+        "8e0b083e795c924d64635bba9c3571f42e956eca572e1d8b807a3e2338fdd0dc/stage",
+        buttonAlign: AlanVoice.BUTTON_ALIGN_LEFT);
+
+    AlanVoice.callbacks.add((payload) => _handleAlanCommand(payload.data));
+
+    setState(() {
+      _alanInited = true;
     });
   }
 
@@ -102,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _initAlanButton,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
