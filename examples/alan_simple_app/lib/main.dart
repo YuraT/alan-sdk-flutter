@@ -1,5 +1,6 @@
 import 'package:alan_voice/alan_voice.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -49,21 +50,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _alanInited = false;
 
-  void _incrementCounter() {
+  void _changeCounter(int diff) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter += diff;
     });
-  }
 
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
+    var visualState = { "counter" : _counter };
+    AlanVoice.setVisualState(json.encode(visualState));
   }
 
   void _handleAlanCommand(Map<String, dynamic> command) {
@@ -71,10 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (command.containsKey("command")) {
       switch (command["command"]) {
         case "increment":
-          _incrementCounter();
+          _changeCounter(1);
           break;
         case "decrement":
-          _decrementCounter();
+          _changeCounter(-1);
           break;
         default:
           debugPrint("Unknown command");

@@ -1,0 +1,11 @@
+intent("Increment", p => {
+   p.play({command: "increment"})
+});
+
+intent("Decrement", p => {
+   p.play({command: "decrement"})
+});
+
+intent("(What|) (is|) counter value", p => {
+   p.play(`Counter is ${p.visual.counter}`)
+});
